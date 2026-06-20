@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="description" content="Personal workout, running and food tracker for a sustainable 12-week start.">
+  <title>Healthy Tracker</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/app-icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">ข้ามไปเนื้อหาหลัก</a>
+
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">12-week reset</p>
+      <h1>Healthy Tracker</h1>
+    </div>
+    <span id="weekBadge" class="week-badge">Week 1</span>
+  </header>
+
+  <main id="main" class="app-main">
+    <section id="today" class="view active" aria-labelledby="todayTitle">
+      <div class="hero-card">
+        <p class="eyebrow">Today</p>
+        <h2 id="todayTitle">ทำให้ดีพอที่จะทำต่อ</h2>
+        <p id="todayMessage">เป้าหมายวันนี้ไม่ใช่ความสมบูรณ์แบบ—แค่ขยับแผนไปข้างหน้าอีกนิด</p>
+      </div>
+
+      <div class="metric-grid">
+        <article class="metric-card">
+          <span>Workout สัปดาห์นี้</span>
+          <strong id="todayWorkoutCount">0 / 3</strong>
+          <div class="progress-track"><span id="workoutProgress"></span></div>
+        </article>
+        <article class="metric-card">
+          <span>Calories วันนี้</span>
+          <strong id="todayCalories">0 / 2,000</strong>
+          <div class="progress-track"><span id="calorieProgress"></span></div>
+        </article>
+        <article class="metric-card">
+          <span>Protein วันนี้</span>
+          <strong id="todayProtein">0 / 120–150 g</strong>
+          <div class="progress-track"><span id="proteinProgress"></span></div>
+        </article>
+      </div>
+
+      <article class="card next-card">
+        <div>
+          <p class="eyebrow">Next session</p>
+          <h3 id="nextWorkoutName">Workout A · Hybrid</h3>
+          <p id="nextWorkoutDetail">Machines 25 นาที + Walk–run 10 นาที</p>
+        </div>
+        <button class="primary" data-go="workout">เริ่ม Workout</button>
+      </article>
+
+      <article class="card gentle-note">
+        <h3>ภาพใหญ่ ไม่ใช่วันเดียว</h3>
+        <p>ดูค่าเฉลี่ยและ Adherence ทุก 14 วัน แอปจะไม่เปลี่ยน Calories หรือความหนักแทนคุณโดยอัตโนมัติ</p>
+      </article>
+    </section>
+
+    <section id="workout" class="view" aria-labelledby="workoutTitle">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Train</p>
+          <h2 id="workoutTitle">Workout</h2>
+        </div>
+        <select id="workoutTemplate" aria-label="เลือก Workout template">
+          <option value="A">Workout A</option>
+          <option value="B">Workout B</option>
+          <option value="C">Workout C</option>
+        </select>
+      </div>
+
+      <div id="safetyNotice" class="notice warning">
+        <strong>Safety first</strong>
+        <span>หยุดทันทีหากเจ็บหน้าอก เวียนศีรษะ หายใจผิดปกติ หรือปวดข้อเฉียบพลัน</span>
+      </div>
+
+      <form id="workoutForm">
+        <label class="date-field">วันที่ <input id="workoutDate" type="date" required></label>
+        <div id="exerciseList" class="exercise-list"></div>
+        <article id="runCard" class="card run-card" hidden>
+          <div>
+            <p class="eyebrow">Walk–run · 10 min</p>
+            <h3 id="runStageTitle">Stage 1</h3>
+            <p id="runStageDetail"></p>
+          </div>
+          <label class="check-row"><input id="runCompleted" type="checkbox"> ทำครบ 10 นาที</label>
+        </article>
+        <button class="primary full" type="submit">บันทึก Session</button>
+      </form>
+      <div id="workoutHistory" class="history-list"></div>
+    </section>
+
+    <section id="food" class="view" aria-labelledby="foodTitle">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Fuel</p>
+          <h2 id="foodTitle">Food Plan</h2>
+        </div>
+        <label class="date-field compact"><span class="sr-only">วันที่อาหาร</span><input id="foodDate" type="date"></label>
+      </div>
+
+      <div class="nutrition-summary">
+        <article><span>Calories</span><strong id="foodCalories">0</strong><small>/ <span id="calorieTargetLabel">2,000</span> kcal</small></article>
+        <article><span>Protein</span><strong id="foodProtein">0</strong><small>/ 120–150 g</small></article>
+      </div>
+
+      <div id="mealSlots" class="meal-slots"></div>
+
+      <details class="card custom-meal">
+        <summary>เพิ่ม Custom meal</summary>
+        <form id="customMealForm" class="form-grid">
+          <label>ชื่ออาหาร<input id="customMealName" required placeholder="เช่น ก๋วยเตี๋ยวไก่"></label>
+          <label>ช่วงมื้อ<select id="customMealSlot"><option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option></select></label>
+          <label>Calories<input id="customMealKcal" type="number" min="0" required inputmode="numeric"></label>
+          <label>Protein (g)<input id="customMealProtein" type="number" min="0" required inputmode="decimal"></label>
+          <button class="secondary" type="submit">เพิ่มมื้อนี้</button>
+        </form>
+      </details>
+      <p class="fine-print">ค่าของอาหารร้านเป็นประมาณการ Portion และวิธีปรุงทำให้ตัวเลขเปลี่ยนได้</p>
+    </section>
+
+    <section id="progress" class="view" aria-labelledby="progressTitle">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Trend</p>
+          <h2 id="progressTitle">Progress</h2>
+        </div>
+      </div>
+
+      <form id="weightForm" class="card inline-form">
+        <label>วันที่<input id="weightDate" type="date" required></label>
+        <label>Weight (kg)<input id="weightValue" type="number" min="30" max="300" step="0.1" required inputmode="decimal"></label>
+        <button class="secondary" type="submit">บันทึก</button>
+      </form>
+
+      <article class="card chart-card">
+        <div class="chart-heading">
+          <div>
+            <p class="eyebrow">InBody trend</p>
+            <h3 id="chartTitle">Weight</h3>
+          </div>
+          <select id="metricSelect" aria-label="เลือก InBody metric">
+            <option value="weightKg">Weight</option>
+            <option value="skeletalMuscleKg">Skeletal Muscle Mass</option>
+            <option value="bodyFatMassKg">Body Fat Mass</option>
+            <option value="bodyFatPercent">Body Fat %</option>
+            <option value="visceralFatLevel">Visceral Fat Level</option>
+          </select>
+        </div>
+        <div id="chartEmpty" class="empty-state">Import InBody JSON ใน Settings เพื่อดูแนวโน้มเดิม</div>
+        <svg id="progressChart" viewBox="0 0 600 240" role="img" aria-label="กราฟแนวโน้ม InBody" hidden></svg>
+        <div id="chartStats" class="chart-stats"></div>
+      </article>
+      <div id="inBodyCards" class="metric-grid"></div>
+    </section>
+
+    <section id="settings" class="view" aria-labelledby="settingsTitle">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Your data</p>
+          <h2 id="settingsTitle">Settings & Backup</h2>
+        </div>
+      </div>
+
+      <form id="settingsForm" class="card form-grid settings-grid">
+        <label>วันเริ่มแผน<input id="startDate" type="date" required></label>
+        <label>Calories target<input id="calorieTarget" type="number" min="1200" max="5000" required></label>
+        <label>Protein minimum (g)<input id="proteinMin" type="number" min="30" max="300" required></label>
+        <label>Protein maximum (g)<input id="proteinMax" type="number" min="30" max="300" required></label>
+        <button class="primary" type="submit">บันทึก Settings</button>
+      </form>
+
+      <article class="card backup-card">
+        <h3>Backup ข้อมูลทั้งหมด</h3>
+        <p>ไฟล์มีข้อมูลสุขภาพส่วนตัว โปรดเก็บไว้ในที่ปลอดภัย</p>
+        <div class="button-row">
+          <button id="exportBackup" class="secondary">Export JSON</button>
+          <label class="file-button">Restore backup<input id="importBackup" type="file" accept="application/json"></label>
+        </div>
+      </article>
+
+      <article class="card backup-card">
+        <h3>Import InBody history</h3>
+        <p>นำเข้าเฉพาะ 5 metrics หลัก ข้อมูลจะอยู่ในเครื่องนี้เท่านั้น</p>
+        <label class="file-button">เลือก InBody JSON<input id="importInBody" type="file" accept="application/json"></label>
+        <p id="inBodyImportStatus" class="status-text"></p>
+      </article>
+
+      <article class="card install-card">
+        <h3>เพิ่มบน iPhone Home Screen</h3>
+        <ol>
+          <li>เปิดเว็บนี้ใน Safari</li>
+          <li>แตะ Share</li>
+          <li>เลือก Add to Home Screen</li>
+        </ol>
+      </article>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="เมนูหลัก">
+    <button class="active" data-view="today" aria-label="Today"><span>●</span>Today</button>
+    <button data-view="workout" aria-label="Workout"><span>↗</span>Workout</button>
+    <button data-view="food" aria-label="Food"><span>◇</span>Food</button>
+    <button data-view="progress" aria-label="Progress"><span>⌁</span>Progress</button>
+    <button data-view="settings" aria-label="Settings"><span>⚙</span>Settings</button>
+  </nav>
+
+  <dialog id="safetyDialog">
+    <form method="dialog" id="safetyForm">
+      <p class="eyebrow">ก่อนเริ่ม</p>
+      <h2>เช็กความพร้อมสั้น ๆ</h2>
+      <p>แอปนี้เป็นตัวช่วยบันทึก ไม่ใช่คำวินิจฉัยหรือคำแนะนำทางการแพทย์</p>
+      <label class="check-row"><input id="safetyCheck" type="checkbox" required> ตอนนี้ไม่มีอาการเจ็บหน้าอก เวียนศีรษะ หายใจผิดปกติ หรือปวดข้อเฉียบพลัน</label>
+      <button class="primary full" value="confirm">พร้อมเริ่มอย่างค่อยเป็นค่อยไป</button>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

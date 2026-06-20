@@ -1,0 +1,4 @@
+outputs/*.json
+work/
+.DS_Store
+Thumbs.db
