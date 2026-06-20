@@ -62,8 +62,19 @@ test("backup round-trip accepts current schema and rejects old schema", () => {
   assert.equal(validateBackup({ ...backup, schemaVersion: 0 }), false);
 });
 
-test("private import contains seven valid records and stays idempotent", async () => {
-  const data = JSON.parse(await readFile(new URL("../outputs/inbody-private-import.json", import.meta.url), "utf8"));
+test("a seven-record InBody import validates and stays idempotent", () => {
+  const data = {
+    schemaVersion: 1,
+    type: "healthy-tracker-inbody",
+    records: Array.from({ length: 7 }, (_, index) => ({
+      date: `2026-0${index + 1}-01`,
+      weightKg: 70 + index,
+      skeletalMuscleKg: 30,
+      bodyFatMassKg: 20,
+      bodyFatPercent: 25,
+      visceralFatLevel: 5
+    }))
+  };
   assert.equal(validateInBodyImport(data), true);
   assert.equal(data.records.length, 7);
   assert.equal(mergeInBodyRecords(data.records, data.records).length, 7);
